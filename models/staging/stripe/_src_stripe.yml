@@ -1,7 +1,7 @@
 sources:
   - name: stripe
     description: Payment processor source system
-    database: workspace
+    database: dbt-tutorial
     schema: stripe
     tables:
       - name: payment

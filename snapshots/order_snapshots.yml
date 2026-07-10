@@ -1,0 +1,10 @@
+snapshots:
+  - name: order_history
+    relation: ref('stg_jaffle_shop__orders')
+    config:
+      strategy: check
+      unique_key: order_id
+      check_cols: 
+        - customer_id
+        - order_status
+        - order_placed_at
