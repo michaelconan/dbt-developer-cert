@@ -1,3 +1,118 @@
 models:
   - name: dim_customers
-    description: Final model of customer information
+    description: Customer dimension table containing keys, name, and aggregated order statistics.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: customer_id
+        description: Unique identifier for each customer.
+        data_type: INT64
+        constraints:
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_first_name
+        description: First name of the customer.
+        data_type: STRING
+      - name: customer_last_name
+        description: Last name of the customer.
+        data_type: STRING
+      - name: first_order_date
+        description: Date of the customer's first order.
+        data_type: DATE
+      - name: most_recent_order_date
+        description: Date of the customer's most recent order.
+        data_type: DATE
+      - name: number_of_orders
+        description: Total count of orders placed by the customer.
+        data_type: INT64
+        data_tests:
+          - not_null
+
+  - name: fct_customer_orders
+    description: Fact table of customer orders containing transactional details, metrics, and windowed sequence values.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: order_id
+        description: Unique identifier for each order.
+        data_type: INT64
+        constraints:
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Foreign key referencing the customer.
+        data_type: INT64
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+      - name: order_placed_at
+        description: Date the order was placed.
+        data_type: DATE
+        data_tests:
+          - not_null
+      - name: order_status
+        description: "{{ doc('order_status') }}"
+        data_type: STRING
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - returned
+                  - shipped
+                  - completed
+                  - placed
+                  - return_pending
+      - name: total_amount_paid
+        description: Total amount paid for the order in USD.
+        data_type: FLOAT64
+      - name: payment_finalized_date
+        description: Date the payment for the order was finalized.
+        data_type: DATE
+      - name: customer_first_name
+        description: First name of the customer at the time of the order.
+        data_type: STRING
+      - name: customer_last_name
+        description: Last name of the customer at the time of the order.
+        data_type: STRING
+      - name: transaction_seq
+        description: Overall transaction sequence number.
+        data_type: INT64
+        data_tests:
+          - not_null
+      - name: customer_sales_seq
+        description: Sales sequence number specific to the customer.
+        data_type: INT64
+        data_tests:
+          - not_null
+      - name: nvsr
+        description: Status indicating whether the customer is 'new' or 'return'.
+        data_type: STRING
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - new
+                  - return
+      - name: customer_lifetime_value
+        description: Cumulative lifetime value of the customer up to this order.
+        data_type: FLOAT64
+        data_tests:
+          - not_null
+      - name: fdos
+        description: First day of sale for the customer (date of their first order).
+        data_type: DATE
+        data_tests:
+          - not_null

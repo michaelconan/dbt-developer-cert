@@ -22,6 +22,15 @@ sources:
 
       - name: orders
         description: Raw orders data
+        config:          
+          freshness:
+            warn_after:
+              count: 12
+              period: hour
+            error_after: 
+              count: 1
+              period: day
+          loaded_at_field: _etl_loaded_at
         columns:
           - name: id
             description: Primary key for orders data
@@ -57,12 +66,3 @@ sources:
             data_type: timestamp
             data_tests:
               - not_null
-        config:          
-          freshness:
-            warn_after:
-              count: 12
-              period: hour
-            error_after: 
-              count: 1
-              period: day
-          loaded_at_field: _etl_loaded_at

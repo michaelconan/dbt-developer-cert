@@ -16,4 +16,13 @@ clean-targets:
 
 models:
   jaffle_shop:
-    +materialized: view
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
+
+vars:
+  # public bigquery dataset available, other platforms require source data load from S3
+  source_db: "{{ 'dbt-tutorial' if target.type == 'bigquery' else target.database }}"

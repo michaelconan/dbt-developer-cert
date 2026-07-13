@@ -1,28 +1,52 @@
 models:
   - name: stg_jaffle_shop__customers
     description: One unique customer per record
+    config:
+      contract:
+        enforced: true
     columns:
       - name: customer_id
         description: Unique identifier for customer record
+        data_type: INT64
         data_tests:
           - unique
           - not_null
+      - name: customer_first_name
+        description: First name of the customer
+        data_type: STRING
+      - name: customer_last_name
+        description: Last name of the customer
+        data_type: STRING
+
   - name: stg_jaffle_shop__orders
     description: One unique order per record
+    config:
+      contract:
+        enforced: true
     columns:
       - name: order_id
         description: Unique identifier for order record
+        data_type: INT64
         data_tests:
           - unique
           - not_null
-      - name: order_status
-        description: "{{ doc('order_status') }}"
-        data_tests:
-          - not_null
       - name: customer_id
         description: Customer identifier
+        data_type: INT64
         data_tests:
+          - not_null
           - relationships:
               arguments:
                 field: customer_id
                 to: ref('stg_jaffle_shop__customers')
+      - name: order_placed_at
+        description: Date the order was placed
+        data_type: DATE
+      - name: order_status
+        description: "{{ doc('order_status') }}"
+        data_type: STRING
+        data_tests:
+          - not_null
+      - name: valid_order_date
+        description: Order date for non-returned orders, null for returned or return-pending orders
+        data_type: DATE

@@ -1,7 +1,7 @@
 developer:
-  target: dev
+  target: gbq
   outputs:
-    dev:
+    gbq:
       type: bigquery
       method: service-account
       project: "{{ env_var('GCP_PROJECT_ID') }}"
@@ -9,3 +9,17 @@ developer:
       threads: 4
       keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
 
+    dbx:
+      type: databricks
+      auth_type: oauth
+      threads: 4
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
+      catalog: workspace
+      schema: dbt_mc
+
+    duck:
+      type: duckdb
+      path: 'training.duckdb'
+      database: training
+      threads: 4

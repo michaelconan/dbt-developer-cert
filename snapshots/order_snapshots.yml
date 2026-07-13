@@ -1,5 +1,5 @@
 snapshots:
-  - name: order_history
+  - name: stg_jaffle_shop__order_history
     relation: ref('stg_jaffle_shop__orders')
     config:
       strategy: check

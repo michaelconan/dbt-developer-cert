@@ -1,16 +1,37 @@
 models:
   - name: stg_stripe__payments
     description: Payment data prepared for analysis
+    config:
+      contract:
+        enforced: true
     columns:
       - name: payment_id
         description: Unique identifier for payment record
+        data_type: INT64
         data_tests:
           - unique
           - not_null
       - name: order_id
         description: Identifier for related order
+        data_type: INT64
         data_tests:
+          - not_null
           - relationships:
               arguments:
                 field: order_id
                 to: ref('stg_jaffle_shop__orders')
+      - name: payment_method
+        description: "{{ doc('payment_method') }}"
+        data_type: STRING
+      - name: payment_status
+        description: Whether the payment succeeded or failed
+        data_type: STRING
+      - name: payment_created_at
+        description: Date on which the payment was created
+        data_type: DATE
+      - name: _batched_at
+        description: Date and time when the payment batch was loaded into the warehouse
+        data_type: DATETIME
+      - name: payment_amount
+        description: Monetary amount of payment in USD (converted from cents)
+        data_type: FLOAT64
